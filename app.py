@@ -85,7 +85,7 @@ class PDFStamperApp(ctk.CTk):
 
         ctk.CTkLabel(
             hdr,
-            text="מערכת חותמות PDF",
+            text="מערכת חותמות PDF - עבור חברת רוזין",
             font=ctk.CTkFont(size=22, weight="bold"),
         ).grid(row=0, column=0, pady=(15, 3))
 
@@ -106,7 +106,7 @@ class PDFStamperApp(ctk.CTk):
             pad = (0, 10) if col == 0 else (10, 0)
             ctk.CTkButton(
                 frame,
-                text=f"✓  חתום {cfg['label']}",
+                text=f"חתום {cfg['label']}  ✓",
                 height=65,
                 font=ctk.CTkFont(size=16, weight="bold"),
                 fg_color=cfg["fg"],
@@ -117,7 +117,7 @@ class PDFStamperApp(ctk.CTk):
 
         self._hint_lbl = ctk.CTkLabel(
             frame,
-            text="← בחר סוג חותמת",
+            text="בחר סוג חותמת ←",
             font=ctk.CTkFont(size=12),
             text_color=("gray55", "gray65"),
         )
@@ -140,7 +140,7 @@ class PDFStamperApp(ctk.CTk):
         ).grid(row=0, column=0, padx=(0, 10))
 
         ctk.CTkButton(
-            bar, text="+ הוסף קבצים", width=140,
+            bar, text="הוסף קבצים +", width=140,
             font=ctk.CTkFont(size=12),
             command=self._add_files,
         ).grid(row=0, column=1)
@@ -359,15 +359,15 @@ class PDFStamperApp(ctk.CTk):
 
             try:
                 self._stamp_pdf(path, stamp_path, position, stamp_all, ts_color)
-                self.after(0, lambda f=fname: self._log(f"✓  {f}"))
+                self.after(0, lambda f=fname: self._log(f"{f}  ✓"))
                 success += 1
             except PermissionError:
                 msg = "הקובץ נעול — סגור אותו בתוכנה אחרת ונסה שוב"
-                self.after(0, lambda f=fname, m=msg: self._log(f"✗  {f}  —  {m}"))
+                self.after(0, lambda f=fname, m=msg: self._log(f"{f}  —  {m}  ✗"))
                 failed += 1
             except Exception as exc:
                 msg = str(exc)
-                self.after(0, lambda f=fname, m=msg: self._log(f"✗  {f}  —  {m}"))
+                self.after(0, lambda f=fname, m=msg: self._log(f"{f}  —  {m}  ✗"))
                 failed += 1
 
             prog = (i + 1) / total
