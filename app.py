@@ -28,14 +28,14 @@ def get_app_dir():
 # ─── Configuration ─────────────────────────────────────────────────────────────
 STAMP_CONFIGS = {
     "received": {
-        "label": "לבקתה",
+        "label": "Received",
         "file": "received.jpg",
         "fg": ("#2563EB", "#1D4ED8"),
         "hover": ("#1D4ED8", "#1E40AF"),
         "ts_color": (0.10, 0.55, 0.20),   # green timestamp
     },
     "paid": {
-        "label": "םלוש",
+        "label": "Paid",
         "file": "paid.jpg",
         "fg": ("#16A34A", "#15803D"),
         "hover": ("#15803D", "#166534"),
@@ -44,10 +44,10 @@ STAMP_CONFIGS = {
 }
 
 POSITIONS = {
-    "הטמל ןימי": "bottom-right",
-    "הטמל לאמש": "bottom-left",
-    "הלעמל ןימי": "top-right",
-    "הלעמל לאמש": "top-left",
+    "Bottom Right": "bottom-right",
+    "Bottom Left": "bottom-left",
+    "Top Right": "top-right",
+    "Top Left": "top-left",
 }
 
 
@@ -56,7 +56,7 @@ class PDFStamperApp(ctk.CTk):
 
     def __init__(self):
         super().__init__()
-        self.title("PDF חותמות מערכת")
+        self.title("PDF Stamper - Rozen Company")
         self.geometry("680x720")
         self.minsize(540, 600)
         self.grid_columnconfigure(0, weight=1)
@@ -86,13 +86,13 @@ class PDFStamperApp(ctk.CTk):
 
         ctk.CTkLabel(
             hdr,
-            text="ניזור תרבח רוברע - PDF תומתוח תכערמ",
+            text="PDF Stamper - Rozen Company",
             font=ctk.CTkFont(size=22, weight="bold"),
         ).grid(row=0, column=0, pady=(15, 3))
 
         ctk.CTkLabel(
             hdr,
-            text="PDF יצבק לע תיטומוטוא המימתח",
+            text="Automatic stamp on PDF documents",
             font=ctk.CTkFont(size=13),
             text_color=("gray55", "gray65"),
         ).grid(row=1, column=0, pady=(0, 15))
@@ -107,7 +107,7 @@ class PDFStamperApp(ctk.CTk):
             pad = (0, 10) if col == 0 else (10, 0)
             btn = ctk.CTkButton(
                 frame,
-                text=f"םותח {cfg['label']}  ✓",
+                text=f"Stamp {cfg['label']}  ✓",
                 height=65,
                 font=ctk.CTkFont(size=16, weight="bold"),
                 fg_color=cfg["fg"],
@@ -120,7 +120,7 @@ class PDFStamperApp(ctk.CTk):
 
         self._hint_lbl = ctk.CTkLabel(
             frame,
-            text="תמתוח גוס רחב ←",
+            text="Select stamp type ↓",
             font=ctk.CTkFont(size=12),
             text_color=("gray55", "gray65"),
         )
@@ -138,18 +138,18 @@ class PDFStamperApp(ctk.CTk):
         bar.grid_columnconfigure(3, weight=1)
 
         ctk.CTkLabel(
-            bar, text="ורבחנש FDP יצבק",
+            bar, text="Selected PDF Files:",
             font=ctk.CTkFont(size=13, weight="bold"),
         ).grid(row=0, column=0, padx=(0, 10))
 
         ctk.CTkButton(
-            bar, text="םיצבק ףסוה +", width=140,
+            bar, text="Add Files +", width=140,
             font=ctk.CTkFont(size=12),
             command=self._add_files,
         ).grid(row=0, column=1)
 
         ctk.CTkButton(
-            bar, text="לכה הקנ", width=88,
+            bar, text="Clear All", width=88,
             font=ctk.CTkFont(size=12),
             fg_color=("gray70", "gray30"),
             hover_color=("gray60", "gray40"),
@@ -157,7 +157,7 @@ class PDFStamperApp(ctk.CTk):
         ).grid(row=0, column=2, padx=(6, 0))
 
         self._file_count_lbl = ctk.CTkLabel(
-            bar, text="םיצבק 0",
+            bar, text="0 files",
             font=ctk.CTkFont(size=12),
             text_color=("gray50", "gray60"),
         )
@@ -178,10 +178,10 @@ class PDFStamperApp(ctk.CTk):
         opts = ctk.CTkFrame(box, fg_color="transparent")
         opts.grid(row=0, column=0, sticky="ew", pady=(0, 8))
 
-        ctk.CTkLabel(opts, text=":תמתוח םוקימ", font=ctk.CTkFont(size=12)).grid(
+        ctk.CTkLabel(opts, text="Stamp Position:", font=ctk.CTkFont(size=12)).grid(
             row=0, column=0, padx=(0, 6))
 
-        self._position_var = ctk.StringVar(value="הטמל ןימי")
+        self._position_var = ctk.StringVar(value="Bottom Right")
         ctk.CTkOptionMenu(
             opts,
             variable=self._position_var,
@@ -193,15 +193,15 @@ class PDFStamperApp(ctk.CTk):
         self._all_pages_var = ctk.BooleanVar(value=False)
         ctk.CTkCheckBox(
             opts,
-            text=")ןושאר דומע קר אל( םידפה לכ לע םותח",
+            text="Stamp all pages (not just first page)",
             variable=self._all_pages_var,
             font=ctk.CTkFont(size=12),
         ).grid(row=0, column=2, padx=18)
 
-        # "צור חותמת" button
+        # "Create Stamp" button
         self._create_btn = ctk.CTkButton(
             box,
-            text="תמתוח רוצ",
+            text="Create Stamp",
             height=52,
             font=ctk.CTkFont(size=16, weight="bold"),
             fg_color=("#DC2626", "#B91C1C"),
@@ -232,7 +232,7 @@ class PDFStamperApp(ctk.CTk):
 
         self._status_lbl = ctk.CTkLabel(
             box,
-            text="הדובעל ןכומ",
+            text="Ready to work",
             font=ctk.CTkFont(size=11),
             text_color=("gray55", "gray65"),
         )
@@ -255,7 +255,7 @@ class PDFStamperApp(ctk.CTk):
                 btn.configure(border_width=0)
 
         self._hint_lbl.configure(
-            text=f":תרחבנ תמתוח {cfg['label']}",
+            text=f"Selected stamp: {cfg['label']}",
             text_color=cfg["fg"][0],
             font=ctk.CTkFont(size=12, weight="bold"),
         )
@@ -263,7 +263,7 @@ class PDFStamperApp(ctk.CTk):
 
     def _add_files(self):
         files = filedialog.askopenfilenames(
-            title="PDF יצבק רחב",
+            title="Select PDF files",
             filetypes=[("PDF Files", "*.pdf")],
         )
         added = 0
@@ -318,7 +318,7 @@ class PDFStamperApp(ctk.CTk):
 
     def _refresh_file_count(self):
         n = len(self._selected_files)
-        self._file_count_lbl.configure(text=f"םיצבק {n}")
+        self._file_count_lbl.configure(text=f"{n} files")
 
     def _update_create_btn(self):
         ready = bool(self._stamp_type and self._selected_files and not self._processing)
@@ -333,10 +333,10 @@ class PDFStamperApp(ctk.CTk):
 
         if not os.path.exists(stamp_path):
             messagebox.showerror(
-                "אצמנ אל תמתוח",
-                f"אצמנ אל תמתוח ץבוק:\n\n{stamp_path}\n\n"
-                f"ץבוק סנכה אנא '{cfg['file']}'\n"
-                f".EXE-ה ץבוק דיצ 'stamps' תייקית",
+                "Stamp not found",
+                f"Stamp file not found:\n\n{stamp_path}\n\n"
+                f"Please add a file named '{cfg['file']}'\n"
+                f"in the 'stamps' folder next to the EXE.",
             )
             return
 
@@ -364,31 +364,31 @@ class PDFStamperApp(ctk.CTk):
 
         self.after(0, self._log_clear)
         self.after(0, lambda: self._progress.set(0))
-        self.after(0, lambda: self._log(f"םיצבק {total} לע '{label}' המימתח ליקהתמ"))
+        self.after(0, lambda: self._log(f"Starting stamp '{label}' on {total} files"))
         self.after(0, lambda: self._log("─" * 52))
 
         for i, path in enumerate(files):
             fname = os.path.basename(path)
-            self.after(0, lambda f=fname: self._status_lbl.configure(text=f"{f} :דבעמ"))
+            self.after(0, lambda f=fname: self._status_lbl.configure(text=f"Processing: {f}"))
 
             try:
                 self._stamp_pdf(path, stamp_path, position, stamp_all, ts_color)
                 self.after(0, lambda f=fname: self._log(f"✓  {f}"))
                 success += 1
             except PermissionError:
-                msg = "בוש ססנ תרחא הנוכתב ותא רוגס — לוען ץבוקה"
-                self.after(0, lambda f=fname, m=msg: self._log(f"✗  {m}  —  {f}"))
+                msg = "File is locked - close it in another program and try again"
+                self.after(0, lambda f=fname, m=msg: self._log(f"✗  {f}  —  {m}"))
                 failed += 1
             except Exception as exc:
                 msg = str(exc)
-                self.after(0, lambda f=fname, m=msg: self._log(f"✗  {m}  —  {f}"))
+                self.after(0, lambda f=fname, m=msg: self._log(f"✗  {f}  —  {m}"))
                 failed += 1
 
             prog = (i + 1) / total
             self.after(0, lambda v=prog: self._progress.set(v))
 
         self.after(0, lambda: self._log("─" * 52))
-        summary = f"וצילה {success} :םלושה" + (f",  וכשנ {failed}" if failed else "")
+        summary = f"Completed: {success} successful" + (f",  {failed} failed" if failed else "")
         self.after(0, lambda s=summary: self._log(s))
         self.after(0, lambda s=summary: self._status_lbl.configure(text=s))
         self.after(0, lambda s=summary: self._on_worker_done(s))
@@ -396,7 +396,7 @@ class PDFStamperApp(ctk.CTk):
     def _on_worker_done(self, summary):
         self._processing = False
         self._update_create_btn()
-        messagebox.showinfo("םילשתה", summary)
+        messagebox.showinfo("Complete", summary)
 
     # ══════════════════════════════════════════════════ PDF Stamping ══
 
