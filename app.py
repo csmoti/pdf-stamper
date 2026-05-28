@@ -28,14 +28,14 @@ def get_app_dir():
 # ─── Configuration ─────────────────────────────────────────────────────────────
 STAMP_CONFIGS = {
     "received": {
-        "label": "התקבל",
+        "label": "לבקתה",
         "file": "received.jpg",
         "fg": ("#2563EB", "#1D4ED8"),
         "hover": ("#1D4ED8", "#1E40AF"),
         "ts_color": (0.10, 0.55, 0.20),   # green timestamp
     },
     "paid": {
-        "label": "שולם",
+        "label": "םלוש",
         "file": "paid.jpg",
         "fg": ("#16A34A", "#15803D"),
         "hover": ("#15803D", "#166534"),
@@ -44,10 +44,10 @@ STAMP_CONFIGS = {
 }
 
 POSITIONS = {
-    "ימין למטה": "bottom-right",
-    "שמאל למטה": "bottom-left",
-    "ימין למעלה": "top-right",
-    "שמאל למעלה": "top-left",
+    "הטמל ןימי": "bottom-right",
+    "הטמל לאמש": "bottom-left",
+    "הלעמל ןימי": "top-right",
+    "הלעמל לאמש": "top-left",
 }
 
 
@@ -56,7 +56,7 @@ class PDFStamperApp(ctk.CTk):
 
     def __init__(self):
         super().__init__()
-        self.title("מערכת חותמות PDF")
+        self.title("PDF חותמות מערכת")
         self.geometry("680x720")
         self.minsize(540, 600)
         self.grid_columnconfigure(0, weight=1)
@@ -65,6 +65,7 @@ class PDFStamperApp(ctk.CTk):
         self._selected_files = []   # list of absolute PDF paths
         self._stamp_type = None     # "received" | "paid"
         self._processing = False
+        self._stamp_buttons = {}    # Store button references for selection feedback
 
         self._build_ui()
 
@@ -85,13 +86,13 @@ class PDFStamperApp(ctk.CTk):
 
         ctk.CTkLabel(
             hdr,
-            text="מערכת חותמות PDF - ניזור תרבח רוברע",
+            text="ניזור תרבח רוברע - PDF תומתוח תכערמ",
             font=ctk.CTkFont(size=22, weight="bold"),
         ).grid(row=0, column=0, pady=(15, 3))
 
         ctk.CTkLabel(
             hdr,
-            text="חתימה אוטומטית על מסמכי PDF",
+            text="PDF יצבק לע תיטומוטוא המימתח",
             font=ctk.CTkFont(size=13),
             text_color=("gray55", "gray65"),
         ).grid(row=1, column=0, pady=(0, 15))
@@ -104,20 +105,22 @@ class PDFStamperApp(ctk.CTk):
 
         for col, (key, cfg) in enumerate(STAMP_CONFIGS.items()):
             pad = (0, 10) if col == 0 else (10, 0)
-            ctk.CTkButton(
+            btn = ctk.CTkButton(
                 frame,
-                text=f"חתום {cfg['label']}  ✓",
+                text=f"םותח {cfg['label']}  ✓",
                 height=65,
                 font=ctk.CTkFont(size=16, weight="bold"),
                 fg_color=cfg["fg"],
                 hover_color=cfg["hover"],
                 corner_radius=10,
                 command=lambda k=key: self._on_stamp_selected(k),
-            ).grid(row=0, column=col, padx=pad, sticky="ew")
+            )
+            btn.grid(row=0, column=col, padx=pad, sticky="ew")
+            self._stamp_buttons[key] = btn
 
         self._hint_lbl = ctk.CTkLabel(
             frame,
-            text="בחר סוג חותמת ←",
+            text="תמתוח גוס רחב ←",
             font=ctk.CTkFont(size=12),
             text_color=("gray55", "gray65"),
         )
@@ -135,18 +138,18 @@ class PDFStamperApp(ctk.CTk):
         bar.grid_columnconfigure(3, weight=1)
 
         ctk.CTkLabel(
-            bar, text="קבצי PDF שנבחרו:",
+            bar, text="ורבחנש FDP יצבק",
             font=ctk.CTkFont(size=13, weight="bold"),
         ).grid(row=0, column=0, padx=(0, 10))
 
         ctk.CTkButton(
-            bar, text="הוסף קבצים +", width=140,
+            bar, text="םיצבק ףסוה +", width=140,
             font=ctk.CTkFont(size=12),
             command=self._add_files,
         ).grid(row=0, column=1)
 
         ctk.CTkButton(
-            bar, text="נקה הכל", width=88,
+            bar, text="לכה הקנ", width=88,
             font=ctk.CTkFont(size=12),
             fg_color=("gray70", "gray30"),
             hover_color=("gray60", "gray40"),
@@ -154,7 +157,7 @@ class PDFStamperApp(ctk.CTk):
         ).grid(row=0, column=2, padx=(6, 0))
 
         self._file_count_lbl = ctk.CTkLabel(
-            bar, text="0 קבצים",
+            bar, text="םיצבק 0",
             font=ctk.CTkFont(size=12),
             text_color=("gray50", "gray60"),
         )
@@ -175,10 +178,10 @@ class PDFStamperApp(ctk.CTk):
         opts = ctk.CTkFrame(box, fg_color="transparent")
         opts.grid(row=0, column=0, sticky="ew", pady=(0, 8))
 
-        ctk.CTkLabel(opts, text="מיקום חותמת:", font=ctk.CTkFont(size=12)).grid(
+        ctk.CTkLabel(opts, text=":תמתוח םוקימ", font=ctk.CTkFont(size=12)).grid(
             row=0, column=0, padx=(0, 6))
 
-        self._position_var = ctk.StringVar(value="ימין למטה")
+        self._position_var = ctk.StringVar(value="הטמל ןימי")
         ctk.CTkOptionMenu(
             opts,
             variable=self._position_var,
@@ -190,7 +193,7 @@ class PDFStamperApp(ctk.CTk):
         self._all_pages_var = ctk.BooleanVar(value=False)
         ctk.CTkCheckBox(
             opts,
-            text="חתום על כל הדפים (לא רק עמוד ראשון)",
+            text=")ןושאר דומע קר אל( םידפה לכ לע םותח",
             variable=self._all_pages_var,
             font=ctk.CTkFont(size=12),
         ).grid(row=0, column=2, padx=18)
@@ -198,7 +201,7 @@ class PDFStamperApp(ctk.CTk):
         # "צור חותמת" button
         self._create_btn = ctk.CTkButton(
             box,
-            text="צור חותמת",
+            text="תמתוח רוצ",
             height=52,
             font=ctk.CTkFont(size=16, weight="bold"),
             fg_color=("#DC2626", "#B91C1C"),
@@ -229,7 +232,7 @@ class PDFStamperApp(ctk.CTk):
 
         self._status_lbl = ctk.CTkLabel(
             box,
-            text="מוכן לעבודה",
+            text="הדובעל ןכומ",
             font=ctk.CTkFont(size=11),
             text_color=("gray55", "gray65"),
         )
@@ -240,8 +243,19 @@ class PDFStamperApp(ctk.CTk):
     def _on_stamp_selected(self, key):
         self._stamp_type = key
         cfg = STAMP_CONFIGS[key]
+
+        # Update button visual feedback
+        for btn_key, btn in self._stamp_buttons.items():
+            if btn_key == key:
+                btn.configure(
+                    border_width=3,
+                    border_color=cfg["fg"][0],
+                )
+            else:
+                btn.configure(border_width=0)
+
         self._hint_lbl.configure(
-            text=f"חותמת נבחרת: {cfg['label']}",
+            text=f":תרחבנ תמתוח {cfg['label']}",
             text_color=cfg["fg"][0],
             font=ctk.CTkFont(size=12, weight="bold"),
         )
@@ -249,7 +263,7 @@ class PDFStamperApp(ctk.CTk):
 
     def _add_files(self):
         files = filedialog.askopenfilenames(
-            title="בחר קבצי PDF",
+            title="PDF יצבק רחב",
             filetypes=[("PDF Files", "*.pdf")],
         )
         added = 0
@@ -304,7 +318,7 @@ class PDFStamperApp(ctk.CTk):
 
     def _refresh_file_count(self):
         n = len(self._selected_files)
-        self._file_count_lbl.configure(text=f"{n} קבצים")
+        self._file_count_lbl.configure(text=f"םיצבק {n}")
 
     def _update_create_btn(self):
         ready = bool(self._stamp_type and self._selected_files and not self._processing)
@@ -319,10 +333,10 @@ class PDFStamperApp(ctk.CTk):
 
         if not os.path.exists(stamp_path):
             messagebox.showerror(
-                "חותמת לא נמצאה",
-                f"קובץ החותמת לא נמצא:\n\n{stamp_path}\n\n"
-                f"אנא הכנס קובץ בשם  '{cfg['file']}'\n"
-                f"בתיקיית 'stamps'  שליד קובץ ה-EXE.",
+                "אצמנ אל תמתוח",
+                f"אצמנ אל תמתוח ץבוק:\n\n{stamp_path}\n\n"
+                f"ץבוק סנכה אנא '{cfg['file']}'\n"
+                f".EXE-ה ץבוק דיצ 'stamps' תייקית",
             )
             return
 
@@ -350,31 +364,31 @@ class PDFStamperApp(ctk.CTk):
 
         self.after(0, self._log_clear)
         self.after(0, lambda: self._progress.set(0))
-        self.after(0, lambda: self._log(f"מתחיל חתימה '{label}' על {total} קבצים"))
+        self.after(0, lambda: self._log(f"םיצבק {total} לע '{label}' המימתח ליקהתמ"))
         self.after(0, lambda: self._log("─" * 52))
 
         for i, path in enumerate(files):
             fname = os.path.basename(path)
-            self.after(0, lambda f=fname: self._status_lbl.configure(text=f"מעבד: {f}"))
+            self.after(0, lambda f=fname: self._status_lbl.configure(text=f"{f} :דבעמ"))
 
             try:
                 self._stamp_pdf(path, stamp_path, position, stamp_all, ts_color)
-                self.after(0, lambda f=fname: self._log(f"{f}  ✓"))
+                self.after(0, lambda f=fname: self._log(f"✓  {f}"))
                 success += 1
             except PermissionError:
-                msg = "הקובץ נעול — סגור אותו בתוכנה אחרת ונסה שוב"
-                self.after(0, lambda f=fname, m=msg: self._log(f"{f}  —  {m}  ✗"))
+                msg = "בוש ססנ תרחא הנוכתב ותא רוגס — לוען ץבוקה"
+                self.after(0, lambda f=fname, m=msg: self._log(f"✗  {m}  —  {f}"))
                 failed += 1
             except Exception as exc:
                 msg = str(exc)
-                self.after(0, lambda f=fname, m=msg: self._log(f"{f}  —  {m}  ✗"))
+                self.after(0, lambda f=fname, m=msg: self._log(f"✗  {m}  —  {f}"))
                 failed += 1
 
             prog = (i + 1) / total
             self.after(0, lambda v=prog: self._progress.set(v))
 
         self.after(0, lambda: self._log("─" * 52))
-        summary = f"הושלם: {success} הצליחו" + (f",  {failed} נכשלו" if failed else "")
+        summary = f"וצילה {success} :םלושה" + (f",  וכשנ {failed}" if failed else "")
         self.after(0, lambda s=summary: self._log(s))
         self.after(0, lambda s=summary: self._status_lbl.configure(text=s))
         self.after(0, lambda s=summary: self._on_worker_done(s))
@@ -382,7 +396,7 @@ class PDFStamperApp(ctk.CTk):
     def _on_worker_done(self, summary):
         self._processing = False
         self._update_create_btn()
-        messagebox.showinfo("הסתיים", summary)
+        messagebox.showinfo("םילשתה", summary)
 
     # ══════════════════════════════════════════════════ PDF Stamping ══
 
