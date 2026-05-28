@@ -32,7 +32,7 @@ STAMP_CONFIGS = {
         "file": "received.jpg",
         "fg": ("#2563EB", "#1D4ED8"),
         "hover": ("#1D4ED8", "#1E40AF"),
-        "ts_color": (0.10, 0.30, 0.72),   # blue timestamp
+        "ts_color": (0.10, 0.55, 0.20),   # green timestamp
     },
     "paid": {
         "label": "שולם",
@@ -448,7 +448,7 @@ class PDFStamperApp(ctk.CTk):
             fitz.Rect(x1, y1 + stamp_h + GAP,
                       x1 + STAMP_W, y1 + stamp_h + GAP + TS_HEIGHT),
             ts,
-            fontsize=10,
+            fontsize=12,
             color=ts_color,
             align=1,   # centered
         )
