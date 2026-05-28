@@ -85,7 +85,7 @@ class PDFStamperApp(ctk.CTk):
 
         ctk.CTkLabel(
             hdr,
-            text="מערכת חותמות PDF - עבור חברת רוזין",
+            text="מערכת חותמות PDF - ניזור תרבח רוברע",
             font=ctk.CTkFont(size=22, weight="bold"),
         ).grid(row=0, column=0, pady=(15, 3))
 
