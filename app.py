@@ -432,8 +432,8 @@ class PDFStamperApp(ctk.CTk):
         """Insert the stamp image and timestamp text onto a single page."""
         STAMP_W = 135      # width in PDF points (~4.8 cm)
         MARGIN = 20        # distance from page edge
-        TS_HEIGHT = 16     # height of timestamp text block
-        GAP = 4            # gap between image and timestamp
+        TS_HEIGHT = 30     # height of timestamp text block
+        GAP = 8            # gap between image and timestamp
 
         stamp_h = int(orig_h * STAMP_W / orig_w)
         total_h = stamp_h + GAP + TS_HEIGHT
@@ -462,7 +462,7 @@ class PDFStamperApp(ctk.CTk):
             fitz.Rect(x1, y1 + stamp_h + GAP,
                       x1 + STAMP_W, y1 + stamp_h + GAP + TS_HEIGHT),
             ts,
-            fontsize=12,
+            fontsize=14,
             color=ts_color,
             align=1,   # centered
         )
